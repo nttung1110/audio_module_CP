@@ -104,10 +104,9 @@ class AudioES():
     def init_model(self):
         print("========Initializing model===========")
 
+        os.environ["TFHUB_CACHE_DIR"] = "../tmp"
         self.module = hub.load('https://tfhub.dev/google/nonsemantic-speech-benchmark/trill/2')
         self.pipeline = Pipeline.from_pretrained('pyannote/speaker-diarization', use_auth_token="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")
-
-        os.environ["TFHUB_CACHE_DIR"] = "../tmp"
 
     def audio_slicing(self, path_file, start, stop):
         #Works in milliseconds
