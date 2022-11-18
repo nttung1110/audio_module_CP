@@ -32,7 +32,7 @@ from pydub import AudioSegment
 from pyannote.audio import Audio 
 from pyannote.audio import Pipeline
 
-def audio_slicing(path_file, start, stop):
+def audio_slicing(newAudio, start, stop):
     #Works in milliseconds
     """
     @params: start stop is float in sec -> need to transform to minisec
@@ -40,21 +40,21 @@ def audio_slicing(path_file, start, stop):
     """
     start = int(start * 1000)  
     stop = int(stop * 1000) 
-    newAudio = AudioSegment.from_wav(path_file) 
+    #print("length of trunk:", stop/1000 - start/1000,  (stop-start)//96)
     newAudio = newAudio[start : stop]
     return newAudio
 
 # `wav_as_float_or_int16` can be a numpy array or tf.Tensor of float type or
 # int16. The sample rate must be 16kHz. Resample to this sample rate, if
 # necessary.
-def emotion_signals(module, path_file, start, stop):
+def emotion_signals(module, audio, start, stop):
     """
     @params: start, stop in seconds
-    @return: a d*li embeddings in which li represents for duration of the audio, while d is emotion signals representation dimension
+    @return: a li * d embeddings in which li represents for duration of the audio, while d is emotion signals representation dimension
     """
-    wav = audio_slicing(path_file, start, stop).set_frame_rate(16000)
+    
+    wav = audio_slicing(audio, start, stop).set_frame_rate(16000)
     wav_as_np = np.array(wav.get_array_of_samples())
-    #print(wav_as_np.shape)
     emb_dict = module(samples=wav_as_np, sample_rate=16000)
     # For a description of the difference between the two endpoints, please see our
     # paper (https://arxiv.org/abs/2002.12764), section "Neural Network Layer".
@@ -63,12 +63,13 @@ def emotion_signals(module, path_file, start, stop):
     # Embeddings are a [time, feature_dim] Tensors.
     emb.shape.assert_is_compatible_with([None, 512])
     #emb_layer19.shape.assert_is_compatible_with([None, 12288])
+    #print(emb.shape[0])
     return tf.transpose(emb)
 
 def extract_audio_track(path_file, module, pipeline):
     """
     @params: awv file directory
-    list_rep[m]: list_rep[i] has dimension d*li with d (=512) is represents for audio emotion features, and l_i represents for time series of track i
+    list_rep[m]: list_rep[i] has dimension li * d with d (=12288) is represents for audio emotion features, and l_i represents for time series of track i
     list_offset[m]: list_offset[i] = (start, stop) information for track i
     length[m]: duration of each track 
     """
@@ -88,12 +89,14 @@ def extract_audio_track(path_file, module, pipeline):
         list_offset.append([speaker, turn.start, turn.end])
     list_offset = sorted(list_offset)
     length = [y - x for _, x, y in list_offset]
-
+    #print(len(list_offset))
+    audio = AudioSegment.from_file(path_file) 
     for _, start, stop in list_offset:
-        list_rep.append(emotion_signals(module, path_file, start, stop))
-    #print(len(list_rep))
+        if (start == None or stop == None or int(stop * 1000) - int(start * 1000) <= 1000):
+          continue
+        list_rep.append(emotion_signals(module, audio, start, stop))
+    
     return list_rep, list_offset, length
-
 
 class AudioES():
     def __init__(self, args):
@@ -108,28 +111,32 @@ class AudioES():
         self.module = hub.load('https://tfhub.dev/google/nonsemantic-speech-benchmark/trill/2')
         self.pipeline = Pipeline.from_pretrained('pyannote/speaker-diarization', use_auth_token="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")
 
-    def audio_slicing(self, path_file, start, stop):
-        #Works in milliseconds
+    def audio_slicing(self, newAudio, start, stop):
+    #Works in milliseconds
         """
         @params: start stop is float in sec -> need to transform to minisec
         @return: a part of original audio specified by start and stop time
         """
         start = int(start * 1000)  
         stop = int(stop * 1000) 
-        newAudio = AudioSegment.from_wav(path_file) 
+        #print("length of trunk:", stop/1000 - start/1000,  (stop-start)//96)
         newAudio = newAudio[start : stop]
         return newAudio
 
+        # `wav_as_float_or_int16` can be a numpy array or tf.Tensor of float type or
+        # int16. The sample rate must be 16kHz. Resample to this sample rate, if
+        # necessary.
 
-    def emotion_signals(self, path_file, start, stop):
+    def emotion_signals(self, module, audio, start, stop):
         """
         @params: start, stop in seconds
-        @return: a d*li embeddings in which li represents for duration of the audio, while d is emotion signals representation dimension
+        @return: a li * d embeddings in which li represents for duration of the audio, while d is emotion signals representation dimension
         """
-        wav = audio_slicing(path_file, start, stop).set_frame_rate(16000)
+        
+        wav = audio_slicing(audio, start, stop).set_frame_rate(16000)
         wav_as_np = np.array(wav.get_array_of_samples())
         #print(wav_as_np.shape)
-        emb_dict = self.module(samples=wav_as_np, sample_rate=16000)
+        emb_dict = module(samples=wav_as_np, sample_rate=16000)
         # For a description of the difference between the two endpoints, please see our
         # paper (https://arxiv.org/abs/2002.12764), section "Neural Network Layer".
         emb = emb_dict['embedding']
@@ -137,6 +144,7 @@ class AudioES():
         # Embeddings are a [time, feature_dim] Tensors.
         emb.shape.assert_is_compatible_with([None, 512])
         #emb_layer19.shape.assert_is_compatible_with([None, 12288])
+        #print(emb.shape[0])
         return tf.transpose(emb)
 
 
