@@ -165,15 +165,27 @@ class AudioES():
         #Speaker diarization pipeline
         diarization = self.pipeline(f"{filename}.wav")
         list_rep, list_offset, length = [], [], []
-        
+
         #Extract start, stop, and duration of each track
         for turn, _, speaker in diarization.itertracks(yield_label=True):
             list_offset.append([speaker, turn.start, turn.end])
         list_offset = sorted(list_offset)
         length = [y - x for _, x, y in list_offset]
-
+        #print(len(list_offset))
+        audio = AudioSegment.from_file(path_file) 
         for _, start, stop in list_offset:
-            list_rep.append(emotion_signals(self.module, path_file, start, stop))
+            if (start == None or stop == None or int(stop * 1000) - int(start * 1000) <= 1000):
+                continue
+            list_rep.append(self.emotion_signals(self.module, audio, start, stop))
+        
+        # #Extract start, stop, and duration of each track
+        # for turn, _, speaker in diarization.itertracks(yield_label=True):
+        #     list_offset.append([speaker, turn.start, turn.end])
+        # list_offset = sorted(list_offset)
+        # length = [y - x for _, x, y in list_offset]
+
+        # for _, start, stop in list_offset:
+        #     list_rep.append(self.emotion_signals(self.module, path_file, start, stop))
         #print(len(list_rep))
 
         # detach cpu and filter those short signals

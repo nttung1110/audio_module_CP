@@ -68,12 +68,11 @@ def run_pipeline_single_audio(args, path_audio_file, audio_es_module, path_write
 
             all_scores_pick_softmax_track.append(sm[0].tolist())
 
-        pdb.set_trace()
         # Aggregate to find final change point
 
         individual_cp = [a.astype(int).tolist() for a in all_peaks_track]
 
-        final_cp, res_score = aggregator_core.simple_aggregator(all_peaks_track, all_scores_pick_softmax_track, args.max_cp)
+        final_cp, res_score = aggregator_core.simple_aggregator(all_peaks_track, offset_signals, all_scores_pick_softmax_track, args.max_cp)
         final_cp_res = [int(a) for a in list(final_cp)]
 
     time_processing = datetime.now() - start
