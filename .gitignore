@@ -1,4 +1,9 @@
-ES_extractor/tmp
-output_cp_res
-AUDIO_CCU_output_v1
+# temporary files
+tmp
+
+# data
+audio_wav_data
+audio_cp_out
+
 tmp/
+**/__pycache__
