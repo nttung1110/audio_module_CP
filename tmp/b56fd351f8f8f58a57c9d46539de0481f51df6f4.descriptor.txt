@@ -1,3 +1,0 @@
-Module: https://tfhub.dev/google/nonsemantic-speech-benchmark/trill/2
-Download Time: 2022-11-15 13:49:00.803794
-Downloader Hostname: phoenix3 (PID:283693)
