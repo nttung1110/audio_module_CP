@@ -1,22 +1,23 @@
 from .base import BaseLoader
+from src.utils import mkdir
+
 import os
 import os.path as osp
 
 class AudioFolder(BaseLoader):
     def __init__(self, cfg):
         super(AudioFolder, self).__init__(cfg)
-
-        if osp.isdir(self.cfg.path_audio_save_json) is False:
-            os.mkdir(self.cfg.path_audio_save_json)
+        self.write_path_json = osp.join(cfg.output_dir,
+                                        cfg.data.path_audio_save_json)
 
     def get_list_item(self):
         item_list = []
 
-        for file_name in os.listdir(self.cfg.path_audio_folder):
+        for file_name in os.listdir(self.cfg.data.path_audio_folder):
             f_name_no_ext = file_name.split('.')[0]
             
-            file_path_in = osp.join(self.cfg.path_audio_folder, file_name)
-            file_path_out = osp.join(self.cfg.path_audio_save_json, f_name_no_ext+'.json')
+            file_path_in = osp.join(self.cfg.data.path_audio_folder, file_name)
+            file_path_out = osp.join(self.write_path_json, f_name_no_ext+'.json')
 
             item_list.append((file_path_in, file_path_out))
 

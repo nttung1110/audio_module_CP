@@ -7,4 +7,4 @@ def get_audio_loader(config: Config):
         'audio_folder': AudioFolder
     }
 
-    return audio_loader[config.data.name](config.data)
+    return audio_loader[config.data.name](config)

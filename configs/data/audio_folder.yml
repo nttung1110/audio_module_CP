@@ -2,4 +2,4 @@ data:
   name: audio_folder
 
   path_audio_folder: ./audio_wav_data
-  path_audio_save_json: ./audio_cp_out
+  path_audio_save_json: audio_cp_out

@@ -1,5 +1,6 @@
 from src.pipelines import get_pipeline
-from src.utils import setup_config
+from src.utils import setup_config, setup_dir
+
 
 def main(config):
 
@@ -8,6 +9,7 @@ def main(config):
 
 if __name__ == '__main__':
     config = setup_config()
+    setup_dir(config)
 
     main(config)
 

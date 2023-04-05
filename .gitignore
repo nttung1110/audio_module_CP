@@ -3,7 +3,7 @@ tmp
 
 # data
 audio_wav_data
-audio_cp_out
+results
 
 tmp/
 **/__pycache__
