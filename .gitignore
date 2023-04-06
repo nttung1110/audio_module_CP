@@ -3,7 +3,8 @@ tmp
 
 # data
 audio_wav_data
-results
+video_data
+results*
 
 tmp/
 **/__pycache__

@@ -28,6 +28,7 @@ class BaseUCP:
         return scores, peaks
 
     def run(self, es_signals):
+        # se_track is only apply for video to keep track of the offset of track
         print("========Detecting change point from individual ES track===========")
 
         all_scores_cp_track = []
@@ -36,16 +37,23 @@ class BaseUCP:
 
         for each_signal in es_signals:
             res_scores_track, res_peaks_track = self._detect_cp(each_signal)
-            score_pick_track = []
 
-            for idx, each_cp in enumerate(res_peaks_track):
-                score_pick_track.append(res_scores_track[each_cp])
+            if len(res_peaks_track) == 0:
+                # no cp exist
+                res_scores_track = None
+                res_peaks_track = None
+                sm = None
 
-            sm = softmax(torch.Tensor(np.array([score_pick_track])))
+            else:
+                score_pick_track = []
+                for idx, each_cp in enumerate(res_peaks_track):
+                    score_pick_track.append(res_scores_track[each_cp])
+
+                sm = softmax(torch.Tensor(np.array([score_pick_track])))[0].tolist()
 
             all_scores_cp_track.append(res_scores_track)
             all_peaks_cp_track.append(res_peaks_track)
-            all_scores_sm_cp_track.append(sm[0].tolist())
+            all_scores_sm_cp_track.append(sm)
 
         return all_peaks_cp_track, all_scores_cp_track, all_scores_sm_cp_track
     

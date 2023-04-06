@@ -1,8 +1,8 @@
 exp_name: "extractor_'@{extractor.name}'-aggregator_'@{aggregator.name}'-ucp_'@{ucp.name}'"
-output_dir: ./results/
+output_dir: ./results_audio/
 
 min_length_audio_signal: 20
 
 pipeline:
-  name: unsupervised_inference
+  name: unsupervised_audio_inference
 

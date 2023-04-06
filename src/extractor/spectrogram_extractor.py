@@ -1,4 +1,4 @@
-from .base_extractor import *
+from .base_audio_extractor import *
 from src.utils import Config
 
 import librosa

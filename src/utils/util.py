@@ -7,5 +7,5 @@ def mkdir(path):
 
 def setup_dir(cfg):
     # setup output dir
-    next_dir = osp.join(cfg.output_dir, cfg.data.path_audio_save_json)
+    next_dir = osp.join(cfg.output_dir, cfg.data.path_save_json)
     mkdir(next_dir)

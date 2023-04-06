@@ -7,11 +7,11 @@ from datetime import datetime
 from src.extractor import get_extractor
 from src.aggregator import get_aggregator
 from src.ucp import get_ucp
-from src.audio_loader import get_audio_loader
+from src.data_loader import get_audio_loader
 from tqdm import tqdm
 
 
-class UnsupervisedInference():
+class UnsupervisedAudioInference():
     def __init__(self, config) -> None:
         self.config = config
     
