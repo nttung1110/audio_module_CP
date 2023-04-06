@@ -4,8 +4,8 @@ PYTHONPATH='.':$PYTHONPATH \
 
 
 python main.py \
---config configs/aggregator/base_aggregator.yml \
-configs/data/audio_folder.yml \
+--config configs/aggregator/audio_aggregator.yml \
+configs/data/audio.yml \
 configs/pipeline/audio_pipeline/base_pipeline.yml \
-configs/extractor/spectrogram.yml \
+configs/extractor/audio_extractor/spectrogram.yml \
 configs/ucp/base_ucp.yml \

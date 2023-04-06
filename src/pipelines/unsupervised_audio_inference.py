@@ -7,8 +7,11 @@ from datetime import datetime
 from src.extractor import get_extractor
 from src.aggregator import get_aggregator
 from src.ucp import get_ucp
-from src.data_loader import get_audio_loader
+from src.data_loader import get_loader
 from tqdm import tqdm
+
+from src.utils import setup_logger
+
 
 
 class UnsupervisedAudioInference():
@@ -16,9 +19,11 @@ class UnsupervisedAudioInference():
         self.config = config
     
     def run(self):
+        # generate output directory and save the full config file
+        setup_logger(self.config)
 
         # get audio loader
-        audio_loader = get_audio_loader(self.config)
+        audio_loader = get_loader(self.config)
         
         # get ES extractor
         extractor = get_extractor(self.config)

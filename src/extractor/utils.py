@@ -11,9 +11,8 @@ def get_extractor(config: Config):
         # for audio
         'trill': TrillExtractor,
         'spectrogram': SpectrogramExtractor,
-
         # for video
-
+        'hse': HSEEmotExtractor,
 }
     return extractor[config.extractor.name](config.extractor)
 
@@ -32,10 +31,3 @@ def get_tracker(config: Config):
     }
 
     return tracker[config.tracker.name](config.tracker)
-
-def get_extractor(config: Config):
-    emot_extractor = {
-        'hse': HSEEmotExtractor
-    }
-
-    return emot_extractor[config.extractor.name](config.extractor)
